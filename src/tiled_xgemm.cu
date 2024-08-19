@@ -1,14 +1,4 @@
-#include <iostream>
-#include <stdio.h>
 #include <assert.h>
-
-// CUDA Error Checking
-#define cuda_check(err) { \
-    if (err != cudaSuccess) { \
-        std::cout << cudaGetErrorString(err) << " in " << __FILE__ << " at line " << __LINE__ << "\n"; \
-        exit(EXIT_FAILURE); \
-    } \
-}
 
 #define TILE_WIDTH 32
 
@@ -59,41 +49,10 @@ __global__ void tiled_mat_mul_kernel(float* A, float* B, float* C, int Nrows_A, 
       C[i*Ncols_B+j] = value;
 }
 
-void tiled_xgemm(float* A, float* B, float* C, int Nrows_A, int Nrows_B, int Ncols_B)
+void tiled_xgemm(float* d_A, float* d_B, float* d_C, int Nrows_A, int Nrows_B, int Ncols_B, const int dim_block_x, const int dim_block_y)
 {
-    // Device array pointers
-    float* d_A;
-    float* d_B;
-    float* d_C;
-
-    // Device memory allocation
-    cudaError_t err_A = cudaMalloc((void**) &d_A, Nrows_A*Nrows_B*sizeof(float));
-    cuda_check(err_A);
-
-    cudaError_t err_B = cudaMalloc((void**) &d_B, Nrows_B*Ncols_B*sizeof(float));
-    cuda_check(err_B);
-
-    cudaError_t err_C = cudaMalloc((void**) &d_C, Nrows_A*Ncols_B*sizeof(float));
-    cuda_check(err_C);
-
-    // Copying A and B to device memory
-    cudaError_t err_A_ = cudaMemcpy(d_A, A, Nrows_A*Nrows_B*sizeof(float), cudaMemcpyHostToDevice);
-    cuda_check(err_A_);
-
-    cudaError_t err_B_ = cudaMemcpy(d_B, B, Nrows_B*Ncols_B*sizeof(float), cudaMemcpyHostToDevice);
-    cuda_check(err_B_);
-
     // Kernel execution
-    dim3 dim_block(TILE_WIDTH, TILE_WIDTH, 1);
-    dim3 dim_grid(ceil(Ncols_B/(float)(TILE_WIDTH)), ceil(Nrows_A/(float)(TILE_WIDTH)), 1);
+    dim3 dim_block(dim_block_x, dim_block_y, 1);
+    dim3 dim_grid(ceil(Ncols_B/(float)(dim_block_x)), ceil(Nrows_A/(float)(dim_block_y)), 1);
     tiled_mat_mul_kernel<<<dim_grid, dim_block>>>(d_A, d_B, d_C, Nrows_A, Nrows_B, Ncols_B);
-
-    // Copy back results
-    cudaError_t err_C_ = cudaMemcpy(C, d_C, Nrows_A*Ncols_B*sizeof(float), cudaMemcpyDeviceToHost);
-    cuda_check(err_C_);
-
-    // Free memory
-    cudaFree(d_A);
-    cudaFree(d_B);
-    cudaFree(d_C);
 }
