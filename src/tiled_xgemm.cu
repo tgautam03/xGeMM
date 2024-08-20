@@ -2,7 +2,7 @@
 
 #define TILE_WIDTH 32
 
-__global__ void tiled_mat_mul_kernel(float* A, float* B, float* C, int Nrows_A, int Nrows_B, int Ncols_B)
+__global__ void tiled_mat_mul_kernel(float* d_A, float* d_B, float* d_C, int Nrows_A, int Nrows_B, int Ncols_B)
 {
     // Ensure that TILE_WIDTH = BLOCK_SIZE
     assert(TILE_WIDTH == blockDim.x);
@@ -29,12 +29,12 @@ __global__ void tiled_mat_mul_kernel(float* A, float* B, float* C, int Nrows_A, 
     {
         // Load Tiles into shared memory
         if ((i < Nrows_A) && ((phase*TILE_WIDTH+tx) < Nrows_B))
-          sh_A[ty][tx] = A[(i)*Nrows_B + phase*TILE_WIDTH+tx];
+          sh_A[ty][tx] = d_A[(i)*Nrows_B + phase*TILE_WIDTH+tx];
         else
           sh_A[ty][tx] = 0.0f;
 
         if (((phase*TILE_WIDTH + ty) < Nrows_B) && (j < Ncols_B))
-          sh_B[ty][tx] = B[(phase*TILE_WIDTH + ty)*Ncols_B+j];
+          sh_B[ty][tx] = d_B[(phase*TILE_WIDTH + ty)*Ncols_B+j];
         else
           sh_B[ty][tx] = 0.0f;
         __syncthreads();
@@ -46,7 +46,7 @@ __global__ void tiled_mat_mul_kernel(float* A, float* B, float* C, int Nrows_A, 
     }
     // Assigning calculated value
     if ((i < Nrows_A) && (j < Ncols_B))
-      C[i*Ncols_B+j] = value;
+      d_C[i*Ncols_B+j] = value;
 }
 
 void tiled_xgemm(float* d_A, float* d_B, float* d_C, int Nrows_A, int Nrows_B, int Ncols_B, const int dim_block_x, const int dim_block_y)

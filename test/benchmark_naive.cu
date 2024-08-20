@@ -6,7 +6,7 @@
 
 #include <cublas_v2.h>
 
-#include "../include/tiled_xgemm.cuh"
+#include "../include/naive_xgemm.cuh"
 #include "../include/utils.hpp"
 
 // CUDA Error Checking
@@ -126,8 +126,8 @@ int main(int argc, char const *argv[])
                                 d_C_cublas, Ncols_B) // Num cols of C
                     );
 
-        // Tiled Kernel execution
-        tiled_xgemm(d_A, d_B, d_C_xgemm, Nrows_A, Nrows_B, Ncols_B, 32, 32);
+        // Naive Kernel execution
+        naive_xgemm(d_A, d_B, d_C_xgemm, Nrows_A, Nrows_B, Ncols_B, 32, 32);
 
         // Copying results back
         cudaError_t err_C__cublas = cudaMemcpy(C_cublas, d_C_cublas, Nrows_A*Ncols_B*sizeof(float), cudaMemcpyDeviceToHost);
@@ -172,7 +172,7 @@ int main(int argc, char const *argv[])
         cudaEventRecord(beg);
         for (int n_runs = 0; n_runs < 10; n_runs++)
         {
-            tiled_xgemm(d_A, d_B, d_C_xgemm, Nrows_A, Nrows_B, Ncols_B, 32, 32);
+            naive_xgemm(d_A, d_B, d_C_xgemm, Nrows_A, Nrows_B, Ncols_B, 32, 32);
         }
         cudaEventRecord(end);
         cudaEventSynchronize(beg);

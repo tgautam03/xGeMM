@@ -33,27 +33,21 @@ int main(int argc, char const *argv[])
         for (int i = 0; i < Nrows_A; i++)
         {
             for (int j = 0; j < Nrows_B; j++)
-            {
                 A(i,j) = (float)(rand() % (MAX_NUM - MIN_NUM + 1) + MIN_NUM);
-            }
         }
 
         Eigen::MatrixXd B(Nrows_B, Ncols_B);
         for (int i = 0; i < Nrows_B; i++)
         {
             for (int j = 0; j < Ncols_B; j++)
-            {
                 B(i,j) = (float)(rand() % (MAX_NUM - MIN_NUM + 1) + MIN_NUM);
-            }
         }
 
         Eigen::MatrixXd C(Nrows_A, Ncols_B);
         for (int i = 0; i < Nrows_A; i++)
         {
             for (int j = 0; j < Ncols_B; j++)
-            {
                 C(i,j) = 0.0f;
-            }
         }
 
         //----------------------------------------------------//
@@ -67,9 +61,7 @@ int main(int argc, char const *argv[])
         //----------------------------------------------------//
         start = std::chrono::high_resolution_clock::now();
         for (int n_runs = 0; n_runs < 10; n_runs++)
-        {
             C = A * B;
-        }
         stop = std::chrono::high_resolution_clock::now();
 
         elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
