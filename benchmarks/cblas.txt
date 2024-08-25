@@ -1,0 +1,6 @@
+Matrix Sizes: 128 256
+ 
+Time (Seconds): 8.49e-05 0.0010512
+ 
+GPLOPS: 49.4029 31.9201
+ 
