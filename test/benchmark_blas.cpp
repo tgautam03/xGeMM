@@ -13,7 +13,7 @@
 int main(int argc, char const *argv[])
 {
     // Options: 128, 256, 512, 1028, 2048, 4096, 8192
-    int mat_sizes[] = {128, 256, 512, 1028, 2048, 4096, 8192};
+    int mat_sizes[] = {128, 256, 512, 1028, 2048};
     int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
     
     double cblas_time[n_sizes];
@@ -131,8 +131,8 @@ int main(int argc, char const *argv[])
     std::cout << "\n";
 
     // Saving to benchmark file
-    update_benckmark_txt("benchmarks/cpu.txt", cpu_time, cpu_gflops, mat_sizes, n_sizes);
-    update_benckmark_txt("benchmarks/cblas.txt", cblas_time, cblas_gflops, mat_sizes, n_sizes);
+    update_benckmark_txt("txt_benchmarks/cpu.txt", cpu_time, cpu_gflops, mat_sizes, n_sizes);
+    update_benckmark_txt("txt_benchmarks/cblas.txt", cblas_time, cblas_gflops, mat_sizes, n_sizes);
 
     return 0;
 }
