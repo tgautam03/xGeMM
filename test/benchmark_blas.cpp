@@ -12,8 +12,9 @@
 
 int main(int argc, char const *argv[])
 {
+    // Options: 128, 256, 512, 1028, 2048, 4096, 8192
     int mat_sizes[] = {128, 256, 512, 1028, 2048, 4096, 8192};
-    int n_sizes = sizeof(mat_sizes);
+    int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
     
     double cblas_time[n_sizes];
     double cblas_gflops[n_sizes];
@@ -106,11 +107,11 @@ int main(int argc, char const *argv[])
         std::cout << mat_sizes[mat_size] << " ";
     std::cout << "\n \n";
 
-    std::cout << "cBLAS Time: ";
+    std::cout << "cBLAS Time (seconds): ";
     for (int mat_size = 0; mat_size < n_sizes; mat_size++)
         std::cout << cblas_time[mat_size] << " ";
     std::cout << "\n";
-    std::cout << "CPU Time: ";
+    std::cout << "CPU Time (seconds): ";
     for (int mat_size = 0; mat_size < n_sizes; mat_size++)
         std::cout << cpu_time[mat_size] << " ";
     std::cout << "\n \n";
@@ -122,7 +123,16 @@ int main(int argc, char const *argv[])
     std::cout << "CPU GFLOPS: ";
     for (int mat_size = 0; mat_size < n_sizes; mat_size++)
         std::cout << cpu_gflops[mat_size] << " ";
+    std::cout << "\n \n";
+
+    std::cout << "How fast is cBLAS compared to xGeMM (xGeMM/CuBLAS): ";
+    for (int mat_size = 0; mat_size < n_sizes; mat_size++)
+        std::cout << cpu_time[mat_size]/cblas_time[mat_size] << "x ";
     std::cout << "\n";
+
+    // Saving to benchmark file
+    update_benckmark_txt("benchmarks/cpu.txt", cpu_time, cpu_gflops, mat_sizes, n_sizes);
+    update_benckmark_txt("benchmarks/cblas.txt", cblas_time, cblas_gflops, mat_sizes, n_sizes);
 
     return 0;
 }
