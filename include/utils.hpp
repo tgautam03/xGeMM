@@ -15,4 +15,9 @@ void print_mat(Eigen::MatrixXd mat, bool full);
 // Asserting matrices are same within the tolerance (eps)
 void assert_mat(MatrixFP32 A_mat, MatrixFP32 B_mat, float eps);
 void assert_mat(MatrixFP32 A_mat, Eigen::MatrixXd B_mat, float eps);
+
+// Update benchmark.txt file with recorded times and GFLOPS
+void update_benckmark_txt(const std::string& filename, const double recorded_times[], 
+                        const double recorded_gflops[], const int mat_sizes[], 
+                        const int n_sizes);
 #endif

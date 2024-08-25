@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <random>
 #include <iomanip>
+#include <fstream>
 #include <Eigen/Dense>
 #include "../include/MatrixFP32.cuh"
 
@@ -182,4 +183,45 @@ void assert_mat(MatrixFP32 A_mat, Eigen::MatrixXd B_mat, float eps)
             }
         }
     }
+}
+
+void update_benckmark_txt(const std::string& filename, const double recorded_times[], 
+                        const double recorded_gflops[], const int mat_sizes[], 
+                        const int n_sizes)
+{
+    // Opening File
+    std::ofstream file(filename);
+    if (!file.is_open()) 
+    {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return;
+    }
+
+    file << "Matrix Sizes" << ": ";
+    for (int i = 0; i < n_sizes; i++)
+    {
+        if (i != n_sizes-1)
+            file << mat_sizes[i] << " " ;
+        else
+            file << mat_sizes[i] << "\n \n" ;
+    }
+
+    file << "Time (Seconds)" << ": ";
+    for (int i = 0; i < n_sizes; i++)
+    {
+        if (i != n_sizes-1)
+            file << recorded_times[i] << " " ;
+        else
+            file << recorded_times[i] << "\n \n" ;
+    }
+
+    file << "GPLOPS" << ": ";
+    for (int i = 0; i < n_sizes; i++)
+    {
+        if (i != n_sizes-1)
+            file << recorded_gflops[i] << " " ;
+        else
+            file << recorded_gflops[i] << "\n \n" ;
+    }
+    
 }
