@@ -6,3 +6,4 @@
 *.fatbin
 *.out
 *.o
+lib/eigen-3.4.0
