@@ -20,4 +20,10 @@ void assert_mat(MatrixFP32 A_mat, Eigen::MatrixXd B_mat, float eps);
 void update_benckmark_txt(const std::string& filename, const double recorded_times[], 
                         const double recorded_gflops[], const int mat_sizes[], 
                         const int n_sizes);
+
+// // Copy from host to device
+// void copy_host_to_device(MatrixFP32 h_mat, MatrixFP32 d_mat);
+
+// // Copy from device to host
+// void copy_device_to_host(MatrixFP32 d_mat, MatrixFP32 h_mat);
 #endif

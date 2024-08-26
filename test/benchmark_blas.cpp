@@ -33,9 +33,9 @@ int main(int argc, char const *argv[])
         int n = mat_sizes[mat_size];
 
         // Define MatrixFP32
-        MatrixFP32 A_FP32 = MatrixFP32(n, n);
-        MatrixFP32 B_FP32 = MatrixFP32(n, n);
-        MatrixFP32 C_FP32 = MatrixFP32(n, n);
+        MatrixFP32 A_FP32 = MatrixFP32(n, n, false);
+        MatrixFP32 B_FP32 = MatrixFP32(n, n, false);
+        MatrixFP32 C_FP32 = MatrixFP32(n, n, false);
 
         // Initialize Matrices
         init_mat(A_FP32, -10, 10); // Random Initialization between -10 and 10
