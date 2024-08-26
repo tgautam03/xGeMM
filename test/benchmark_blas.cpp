@@ -100,6 +100,11 @@ int main(int argc, char const *argv[])
 
         cpu_time[mat_size] = (elapsed_time.count()/1e+6) / 10;
         cpu_gflops[mat_size] = 2. * 1e-9 * 10 * n * n * n / (elapsed_time.count()/1e+6);
+
+        // Free xGeMM Memory
+        A_FP32.free_mat();
+        B_FP32.free_mat();
+        C_FP32.free_mat();
     }
 
     std::cout << "Matrix Size: ";
@@ -133,6 +138,5 @@ int main(int argc, char const *argv[])
     // Saving to benchmark file
     update_benckmark_txt("txt_benchmarks/cpu.txt", cpu_time, cpu_gflops, mat_sizes, n_sizes);
     update_benckmark_txt("txt_benchmarks/cblas.txt", cblas_time, cblas_gflops, mat_sizes, n_sizes);
-
     return 0;
 }

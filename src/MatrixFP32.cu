@@ -10,10 +10,10 @@ MatrixFP32::MatrixFP32(int n_rows, int n_cols)
     _mat = new float[_n_rows*_n_cols];
 }
 
-// MatrixFP32::~MatrixFP32()
-// {
-//     delete[] _mat;
-// }
+void MatrixFP32::free_mat()
+{
+    delete[] _mat;
+}
 
 void MatrixFP32::shape(int& n_rows, int& n_cols)
 {

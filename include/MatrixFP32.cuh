@@ -11,8 +11,9 @@ private:
 public:
     // Constructor to initialize n_rows x n_cols matrix
     MatrixFP32(int n_rows, int n_cols);
-    // // Deconstructor to free memory
-    // ~MatrixFP32();
+    
+    // Free memory
+    void free_mat();
 
     // Member function to get matrix dimensions (n_rows, n_cols)
     void shape(int& n_rows, int& n_cols);
