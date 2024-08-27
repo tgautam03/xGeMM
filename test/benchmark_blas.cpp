@@ -71,8 +71,20 @@ int main(int argc, char const *argv[])
         C_eigen = A_eigen * B_eigen;
         cpu_xgemm(A_FP32, B_FP32, C_FP32);
         // Assert Results
+        double eps = 1e-8;
         std::cout << "Asserting... " << "n: " << n << "\n";
-        assert_mat(C_FP32, C_eigen, 1e-8);
+        for (int i = 0; i < C_FP32.rows(); i++)
+        {
+            for (int j = 0; j < C_FP32.cols(); j++)
+            {
+                if (fabs(C_FP32.get_val(i, j) - C_eigen(i,j)) > eps)
+                {
+                    std::cerr << "Assertion failed for " << "row number: " << i << ", col number: " << j << ".\n"
+                            << "Absolute Difference: " << fabs(C_FP32.get_val(i,j) - C_eigen(i,j)) << "\n";
+                    assert(fabs(C_FP32.get_val(i,j) - C_eigen(i,j)) < eps && "Assertion failed!");
+                }
+            }
+        }
         std::cout << "Passed! \n \n";
 
         //----------------------------------------------------//
