@@ -33,9 +33,9 @@ int main(int argc, char const *argv[])
         int n = mat_sizes[mat_size];
 
         // Define MatrixFP32
-        MatrixFP32 A_FP32 = MatrixFP32(n, n);
-        MatrixFP32 B_FP32 = MatrixFP32(n, n);
-        MatrixFP32 C_FP32 = MatrixFP32(n, n);
+        MatrixFP32 A_FP32 = MatrixFP32(n, n, false);
+        MatrixFP32 B_FP32 = MatrixFP32(n, n, false);
+        MatrixFP32 C_FP32 = MatrixFP32(n, n, false);
 
         // Initialize Matrices
         init_mat(A_FP32, -10, 10); // Random Initialization between -10 and 10
@@ -71,8 +71,20 @@ int main(int argc, char const *argv[])
         C_eigen = A_eigen * B_eigen;
         cpu_xgemm(A_FP32, B_FP32, C_FP32);
         // Assert Results
+        double eps = 1e-8;
         std::cout << "Asserting... " << "n: " << n << "\n";
-        assert_mat(C_FP32, C_eigen, 1e-8);
+        for (int i = 0; i < C_FP32.rows(); i++)
+        {
+            for (int j = 0; j < C_FP32.cols(); j++)
+            {
+                if (fabs(C_FP32.get_val(i, j) - C_eigen(i,j)) > eps)
+                {
+                    std::cerr << "Assertion failed for " << "row number: " << i << ", col number: " << j << ".\n"
+                            << "Absolute Difference: " << fabs(C_FP32.get_val(i,j) - C_eigen(i,j)) << "\n";
+                    assert(fabs(C_FP32.get_val(i,j) - C_eigen(i,j)) < eps && "Assertion failed!");
+                }
+            }
+        }
         std::cout << "Passed! \n \n";
 
         //----------------------------------------------------//
