@@ -20,16 +20,16 @@ void cpu_xgemm(MatrixFP32 A_mat, MatrixFP32 B_mat, MatrixFP32 C_mat)
     assert (A_n_rows == C_n_rows && "A rows must be equal to C rows");
     assert (B_n_cols == C_n_cols && "B cols must be equal to C cols");
 
-    for (int i = 0; i < A_n_rows; i++)
+    for (int row = 0; row < A_n_rows; row++)
     {
-        for (int j = 0; j < B_n_cols; j++)
+        for (int col = 0; col < B_n_cols; col++)
         {
             float val = 0.0f;
             for (int k = 0; k < A_n_cols; k++)
             {
-                val += A_mat.get_val(i, k) * B_mat.get_val(k, j);
+                val += A_mat.get_val(row, k) * B_mat.get_val(k, col);
             }
-            C_mat.set_val(i, j, val);
+            C_mat.set_val(row, col, val);
         }
     }
 }
