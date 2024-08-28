@@ -58,10 +58,14 @@ int main(int argc, char const *argv[])
         init_mat(C_FP32_xgemm, 1.0f);     // Initialize to 1
 
         // Move matrices to device
-        MatrixFP32 d_A_FP32 = A_FP32.copy_to_device();
-        MatrixFP32 d_B_FP32 = B_FP32.copy_to_device();
-        MatrixFP32 d_C_FP32_cublas = C_FP32_cublas.copy_to_device();
-        MatrixFP32 d_C_FP32_xgemm = C_FP32_xgemm.copy_to_device();
+        MatrixFP32 d_A_FP32 = MatrixFP32(n, n, true); 
+        A_FP32.copy_to_device(d_A_FP32);
+        MatrixFP32 d_B_FP32 = MatrixFP32(n, n, true); 
+        B_FP32.copy_to_device(d_B_FP32);
+        MatrixFP32 d_C_FP32_cublas = MatrixFP32(n, n, true); 
+        C_FP32_cublas.copy_to_device(d_C_FP32_cublas);
+        MatrixFP32 d_C_FP32_xgemm = MatrixFP32(n, n, true); 
+        C_FP32_xgemm.copy_to_device(d_C_FP32_xgemm);
         cudaDeviceSynchronize();
 
         //----------------------------------------------------//

@@ -33,7 +33,7 @@ public:
     __host__ __device__ void set_val(int row, int col, float val);
 
     // Copy to Device
-    MatrixFP32 copy_to_device();
+    void copy_to_device(MatrixFP32 d_mat);
 
     // Copy to host
     void copy_to_host(MatrixFP32 h_mat);
