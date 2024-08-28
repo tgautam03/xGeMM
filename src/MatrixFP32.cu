@@ -52,7 +52,7 @@ __host__ __device__ float MatrixFP32::get_val(int row, int col) const
 }
 
 
-__host__ __device__ void MatrixFP32::set_val(int row, int col, float val) const
+__host__ __device__ void MatrixFP32::set_val(int row, int col, float val)
 {
     _mat[row*_n_cols + col] = val;
 }

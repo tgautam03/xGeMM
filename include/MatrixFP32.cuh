@@ -30,7 +30,7 @@ public:
     __host__ __device__ float get_val(int row, int col) const;
 
     // Member Function to set value (val) at (i,j)
-    __host__ __device__ void set_val(int row, int col, float val) const;
+    __host__ __device__ void set_val(int row, int col, float val);
 
     // Copy to Device
     MatrixFP32 copy_to_device();
