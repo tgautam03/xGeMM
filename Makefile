@@ -35,6 +35,14 @@ build/coalesced_xgemm.o: src/coalesced_xgemm.cu
 benchmark_coalesced.out: test/benchmark_coalesced.cu build/MatrixFP32.o build/utils.o build/coalesced_xgemm.o
 	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/coalesced_xgemm.o test/benchmark_coalesced.cu -o benchmark_coalesced.out
 
+# tiled vs cuBLAS
+build/tiled_xgemm.o: src/tiled_xgemm.cu
+	$(CC) $(DEVICE_COMPILE_FLAG) src/tiled_xgemm.cu -o build/tiled_xgemm.o
+
+benchmark_tiled.out: test/benchmark_tiled.cu build/MatrixFP32.o build/utils.o build/tiled_xgemm.o
+	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/tiled_xgemm.o test/benchmark_tiled.cu -o benchmark_tiled.out
+
+
 # Clean executable files
 clean: 
 	@echo "Removing object files..."

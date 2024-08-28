@@ -24,8 +24,8 @@
 
 int main(int argc, char const *argv[])
 {
-    // Options: 128, 256, 512, 1028, 2048, 4096, 8192
-    int mat_sizes[] = {128, 256, 512, 1028, 2048, 4096, 8192};
+    // Options: 8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192
+    int mat_sizes[] = {8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192};
     int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
 
     // For recording time
@@ -54,8 +54,8 @@ int main(int argc, char const *argv[])
         // Initialize Matrices
         init_mat(A_FP32, -10, 10);          // Random Initialization between -10 and 10
         init_mat(B_FP32, -10, 10);          // Random Initialization between -10 and 10
-        init_mat(C_FP32_cublas, 0.0f);     // Initialize to 0
-        init_mat(C_FP32_xgemm, 0.0f);     // Initialize to 0
+        init_mat(C_FP32_cublas, -1.0f);     // Initialize to -1
+        init_mat(C_FP32_xgemm, 1.0f);     // Initialize to 1
 
         // Move matrices to device
         MatrixFP32 d_A_FP32 = A_FP32.copy_to_device();
@@ -86,7 +86,7 @@ int main(int argc, char const *argv[])
         cudaDeviceSynchronize();
 
         // coalesced Kernel execution
-        coalesced_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm, n, n, n, 32, 32);
+        coalesced_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm, 32, 32);
         cudaDeviceSynchronize();
 
         // Assert that coalesced implementation is correct
@@ -95,6 +95,18 @@ int main(int argc, char const *argv[])
         std::cout << "Asserting Results for N: " << n << "\n";
         assert_mat(C_FP32_xgemm, C_FP32_cublas, 1e-8);
         std::cout << "Assertion Passed! \n \n";
+
+        // Printing the smallest matrix result
+        if (n == 8)
+        {
+            std::cout << "Matrix C (cuBLAS): \n";
+            print_mat(C_FP32_cublas, true);
+            std::cout << "\n";
+
+            std::cout << "Matrix C (xGeMM): \n";
+            print_mat(C_FP32_xgemm, true);
+            std::cout << "\n";
+        }
 
         //----------------------------------------------------//
         //--------------------- cuBLAS -----------------------//
@@ -130,7 +142,7 @@ int main(int argc, char const *argv[])
         cudaEventRecord(beg);
         for (int n_runs = 0; n_runs < 10; n_runs++)
         {
-            coalesced_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm, n, n, n, 32, 32);
+            coalesced_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm, 32, 32);
             cudaDeviceSynchronize();
         }
         cudaEventRecord(end);
@@ -172,7 +184,7 @@ int main(int argc, char const *argv[])
     for (int mat_size = 0; mat_size < n_sizes; mat_size++)
         std::cout << cublas_gflops[mat_size] << " ";
     std::cout << "\n";
-    std::cout << "xGeMM GFLOPS (seconds): ";
+    std::cout << "xGeMM GFLOPS: ";
     for (int mat_size = 0; mat_size < n_sizes; mat_size++)
         std::cout << xgemm_gflops[mat_size] << " ";
     std::cout << "\n \n";
