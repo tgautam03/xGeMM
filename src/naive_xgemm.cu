@@ -17,8 +17,8 @@ __global__ void naive_mat_mul_kernel(MatrixFP32 d_A, MatrixFP32 d_B, MatrixFP32 
             value += d_A.get_val(row, k) * d_B.get_val(k, col);
         }
 
-        // Assigning calculated value
-        d_C.set_val(row, col, value);
+        // Assigning calculated value (SGEMM is C = α*(A @ B)+β*C and in this repo α=1, β=0)
+        d_C.set_val(row, col, 1*value + 0*d_C.get_val(row, col));
     }
 }
 
