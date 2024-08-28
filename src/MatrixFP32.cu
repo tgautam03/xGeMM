@@ -46,12 +46,13 @@ int MatrixFP32::cols()
     return _n_cols;
 }
 
-float MatrixFP32::get_val(int row, int col)
+__host__ __device__ float MatrixFP32::get_val(int row, int col) const
 {
     return _mat[row*_n_cols + col];
 }
 
-void MatrixFP32::set_val(int row, int col, float val)
+
+__host__ __device__ void MatrixFP32::set_val(int row, int col, float val) const
 {
     _mat[row*_n_cols + col] = val;
 }
@@ -71,18 +72,13 @@ MatrixFP32 MatrixFP32::copy_to_device()
     return d_mat;
 }
 
-MatrixFP32 MatrixFP32::copy_to_host()
+void MatrixFP32::copy_to_host(MatrixFP32 h_mat)
 {
     // Make sure that _mat is on device
-    assert(_on_device == true && "Matrix must be in host memory");
-
-    // Initialize Device Matrix
-    MatrixFP32 h_mat(_n_rows, _n_cols, false);
+    assert(_on_device == true && "Matrix must be in device memory");
+    assert(h_mat._on_device == false && "Input Matrix to this function must be in host memory");
 
     // Copying from host to device memory
     cudaError_t err = cudaMemcpy(h_mat._mat, _mat, _n_rows*_n_cols*sizeof(float), cudaMemcpyDeviceToHost);
     CUDA_CHECK(err);
-
-    return h_mat;
 }
-
