@@ -23,8 +23,8 @@ public:
     void free_mat();
 
     // Member function to get matrix dimensions (n_rows, n_cols)
-    int rows();
-    int cols();
+    __host__ __device__ int rows() const;
+    __host__ __device__ int cols() const;
 
     // Member Function to get value at (i,j)
     __host__ __device__ float get_val(int row, int col) const;

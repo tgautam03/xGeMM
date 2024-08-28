@@ -36,12 +36,12 @@ void MatrixFP32::free_mat()
         cudaFree(_mat);
 }
 
-int MatrixFP32::rows()
+__host__ __device__ int MatrixFP32::rows() const
 {
     return _n_rows;
 }
 
-int MatrixFP32::cols()
+__host__ __device__ int MatrixFP32::cols() const
 {
     return _n_cols;
 }
