@@ -1,16 +1,18 @@
 #ifndef MATRIXFP32
 #define MATRIXFP32
 
+#include <device_launch_parameters.h>
+
 class MatrixFP32
 {
 private:
-    // Pointer to dynamic array
-    float* _mat;
-
     int _n_rows;        // Number of rows
     int _n_cols;        // Number of cols
 
-public:   
+public: 
+    // Pointer to dynamic array
+    float* _mat;
+    
     // Matrix in device memory: true; else: false
     bool _on_device; 
     
@@ -25,16 +27,16 @@ public:
     int cols();
 
     // Member Function to get value at (i,j)
-    float get_val(int row, int col);
+    __host__ __device__ float get_val(int row, int col) const;
 
     // Member Function to set value (val) at (i,j)
-    void set_val(int row, int col, float val);
+    __host__ __device__ void set_val(int row, int col, float val) const;
 
     // Copy to Device
     MatrixFP32 copy_to_device();
 
     // Copy to host
-    MatrixFP32 copy_to_host();
+    void copy_to_host(MatrixFP32 h_mat);
 };
 
 #endif
