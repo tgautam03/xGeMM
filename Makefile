@@ -42,6 +42,13 @@ build/tiled_xgemm.o: src/tiled_xgemm.cu
 benchmark_tiled.out: test/benchmark_tiled.cu build/MatrixFP32.o build/utils.o build/tiled_xgemm.o
 	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/tiled_xgemm.o test/benchmark_tiled.cu -o benchmark_tiled.out
 
+# coarse_1d vs cuBLAS
+build/coarse_1d_xgemm.o: src/coarse_1d_xgemm.cu
+	$(CC) $(DEVICE_COMPILE_FLAG) src/coarse_1d_xgemm.cu -o build/coarse_1d_xgemm.o
+
+test_coarse_1d.out: test/test_coarse_1d.cu build/MatrixFP32.o build/utils.o build/coarse_1d_xgemm.o
+	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/coarse_1d_xgemm.o test/test_coarse_1d.cu -o test_coarse_1d.out
+
 
 # Clean executable files
 clean: 
