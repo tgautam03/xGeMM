@@ -101,7 +101,7 @@ int main(int argc, char const *argv[])
         std::cout << "Assertion Passed! \n \n";
 
         // Printing the smallest matrix result
-        if (n == 8)
+        if (n <= 12)
         {
             std::cout << "Matrix C (cuBLAS): \n";
             print_mat(C_FP32_cublas, true);
