@@ -49,6 +49,13 @@ build/coarse_1d_xgemm.o: src/coarse_1d_xgemm.cu
 benchmark_coarse_1d.out: test/benchmark_coarse_1d.cu build/MatrixFP32.o build/utils.o build/coarse_1d_xgemm.o
 	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/coarse_1d_xgemm.o test/benchmark_coarse_1d.cu -o benchmark_coarse_1d.out
 
+# coarse_2d vs cuBLAS
+build/coarse_2d_xgemm.o: src/coarse_2d_xgemm.cu
+	$(CC) $(DEVICE_COMPILE_FLAG) src/coarse_2d_xgemm.cu -o build/coarse_2d_xgemm.o
+
+benchmark_coarse_2d.out: test/benchmark_coarse_2d.cu build/MatrixFP32.o build/utils.o build/coarse_2d_xgemm.o
+	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/coarse_2d_xgemm.o test/benchmark_coarse_2d.cu -o benchmark_coarse_2d.out
+
 
 # Clean executable files
 clean: 
