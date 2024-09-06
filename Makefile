@@ -23,32 +23,20 @@ benchmark_naive.out: src/naive_xgemm.cu test/benchmark_naive.cu build/MatrixFP32
 	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/naive_xgemm.cu test/benchmark_naive.cu -o benchmark_naive.out
 
 # coalesced vs cuBLAS
-build/coalesced_xgemm.o: src/coalesced_xgemm.cu
-	$(CC) $(DEVICE_COMPILE_FLAG) src/coalesced_xgemm.cu -o build/coalesced_xgemm.o
-
-benchmark_coalesced.out: test/benchmark_coalesced.cu build/MatrixFP32.o build/utils.o build/coalesced_xgemm.o
-	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/coalesced_xgemm.o test/benchmark_coalesced.cu -o benchmark_coalesced.out
+benchmark_coalesced.out: src/coalesced_xgemm.cu test/benchmark_coalesced.cu build/MatrixFP32.o build/utils.o
+	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/coalesced_xgemm.cu test/benchmark_coalesced.cu -o benchmark_coalesced.out
 
 # tiled vs cuBLAS
-build/tiled_xgemm.o: src/tiled_xgemm.cu
-	$(CC) $(DEVICE_COMPILE_FLAG) src/tiled_xgemm.cu -o build/tiled_xgemm.o
-
-benchmark_tiled.out: test/benchmark_tiled.cu build/MatrixFP32.o build/utils.o build/tiled_xgemm.o
-	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/tiled_xgemm.o test/benchmark_tiled.cu -o benchmark_tiled.out
+benchmark_tiled.out: src/tiled_xgemm.cu test/benchmark_tiled.cu build/MatrixFP32.o build/utils.o
+	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/tiled_xgemm.cu test/benchmark_tiled.cu -o benchmark_tiled.out
 
 # coarse_1d vs cuBLAS
-build/coarse_1d_xgemm.o: src/coarse_1d_xgemm.cu
-	$(CC) $(DEVICE_COMPILE_FLAG) src/coarse_1d_xgemm.cu -o build/coarse_1d_xgemm.o
-
-benchmark_coarse_1d.out: test/benchmark_coarse_1d.cu build/MatrixFP32.o build/utils.o build/coarse_1d_xgemm.o
-	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/coarse_1d_xgemm.o test/benchmark_coarse_1d.cu -o benchmark_coarse_1d.out
+benchmark_coarse_1d.out: src/coarse_1d_xgemm.cu test/benchmark_coarse_1d.cu build/MatrixFP32.o build/utils.o
+	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/coarse_1d_xgemm.cu test/benchmark_coarse_1d.cu -o benchmark_coarse_1d.out
 
 # coarse_2d vs cuBLAS
-build/coarse_2d_xgemm.o: src/coarse_2d_xgemm.cu
-	$(CC) $(DEVICE_COMPILE_FLAG) src/coarse_2d_xgemm.cu -o build/coarse_2d_xgemm.o
-
-benchmark_coarse_2d.out: test/benchmark_coarse_2d.cu build/MatrixFP32.o build/utils.o build/coarse_2d_xgemm.o
-	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/coarse_2d_xgemm.o test/benchmark_coarse_2d.cu -o benchmark_coarse_2d.out
+benchmark_coarse_2d.out: src/coarse_2d_xgemm.cu test/benchmark_coarse_2d.cu build/MatrixFP32.o build/utils.o
+	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/coarse_2d_xgemm.cu test/benchmark_coarse_2d.cu -o benchmark_coarse_2d.out
 
 
 # Clean executable files

@@ -142,13 +142,13 @@ int main(int argc, char const *argv[])
         std::cout << cpu_gflops[mat_size] << " ";
     std::cout << "\n \n";
 
-    std::cout << "How fast is cBLAS compared to xGeMM (xGeMM/CuBLAS): ";
+    std::cout << "BLAS vs xGeMM (BLAS/xGeMM): ";
     for (int mat_size = 0; mat_size < n_sizes; mat_size++)
-        std::cout << cpu_time[mat_size]/cblas_time[mat_size] << "x ";
+        std::cout << std::fixed << std::setprecision(2) << cblas_time[mat_size]/cpu_time[mat_size]*100 << "% ";
     std::cout << "\n";
 
     // Saving to benchmark file
     update_benckmark_txt("txt_benchmarks/cpu.txt", cpu_time, cpu_gflops, mat_sizes, n_sizes);
-    update_benckmark_txt("txt_benchmarks/cblas.txt", cblas_time, cblas_gflops, mat_sizes, n_sizes);
+    update_benckmark_txt("txt_benchmarks/blas.txt", cblas_time, cblas_gflops, mat_sizes, n_sizes);
     return 0;
 }

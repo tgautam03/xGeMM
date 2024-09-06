@@ -5,7 +5,7 @@
 #include "../include/MatrixFP32.cuh"
 #include "../include/utils.hpp"
 
-#include "../include/naive_xgemm.cuh"
+#include "../include/coarse_2d_xgemm.cuh"
 
 // CUDA Error Checking
 #define cuda_check(err) { \
@@ -90,11 +90,11 @@ int main(int argc, char const *argv[])
                     );
         cudaDeviceSynchronize();
 
-        // Naive Kernel execution
-        naive_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
+        // coarse_2d Kernel execution
+        coarse_2d_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
         cudaDeviceSynchronize();
 
-        // Assert that naive implementation is correct
+        // Assert that coarse_2d implementation is correct
         d_C_FP32_cublas.copy_to_host(C_FP32_cublas);
         d_C_FP32_xgemm.copy_to_host(C_FP32_xgemm);
         std::cout << "Asserting Results for N: " << n << "\n";
@@ -147,7 +147,7 @@ int main(int argc, char const *argv[])
         cudaEventRecord(beg);
         for (int n_runs = 0; n_runs < 10; n_runs++)
         {
-            naive_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
+            coarse_2d_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
             cudaDeviceSynchronize();
         }
         cudaEventRecord(end);
@@ -194,14 +194,14 @@ int main(int argc, char const *argv[])
         std::cout << xgemm_gflops[mat_size] << " ";
     std::cout << "\n \n";
 
-    std::cout << "cuBLAS vs Naive xGeMM (CuBLAS/xGeMM): ";
+    std::cout << "cuBLAS vs coarse_2d xGeMM (CuBLAS/xGeMM): ";
     for (int mat_size = 0; mat_size < n_sizes; mat_size++)
         std::cout << std::fixed << std::setprecision(2) << cublas_time[mat_size]/xgemm_time[mat_size]*100 << "% ";
     std::cout << "\n";
 
     // Saving to benchmark file
     update_benckmark_txt("txt_benchmarks/cublas.txt", cublas_time, cublas_gflops, mat_sizes, n_sizes);
-    update_benckmark_txt("txt_benchmarks/naive_xgemm.txt", xgemm_time, xgemm_gflops, mat_sizes, n_sizes);
+    update_benckmark_txt("txt_benchmarks/coarse_2d_xgemm.txt", xgemm_time, xgemm_gflops, mat_sizes, n_sizes);
 
     return 0;
 }
