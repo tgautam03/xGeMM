@@ -5,6 +5,6 @@
 
 void naive_mat_mul_kernel(MatrixFP32 d_A, MatrixFP32 d_B, MatrixFP32 d_C);
 
-void naive_xgemm(MatrixFP32 d_A, MatrixFP32 d_B, MatrixFP32 d_C, const int dim_block_x, const int dim_block_y);
+void naive_xgemm(MatrixFP32 d_A, MatrixFP32 d_B, MatrixFP32 d_C);
 
 #endif

@@ -15,18 +15,12 @@ build/utils.o: src/utils.cpp
 	$(CC) $(HOST_COMPILE_FLAG) $(ADD_EIGEN) src/utils.cpp -o build/utils.o
 
 # Naive CPU and cBLAS
-build/cpu_xgemm.o: src/cpu_xgemm.cpp
-	$(CC) $(HOST_COMPILE_FLAG) src/cpu_xgemm.cpp -o build/cpu_xgemm.o
-
-benchmark_cpu.out: test/benchmark_cpu.cpp build/MatrixFP32.o build/utils.o build/cpu_xgemm.o
-	$(CC) $(ADD_EIGEN) $(CPU_OPTIMIZE) build/MatrixFP32.o build/utils.o build/cpu_xgemm.o test/benchmark_cpu.cpp -o benchmark_cpu.out
+benchmark_cpu.out: test/benchmark_cpu.cpp src/cpu_xgemm.cpp build/MatrixFP32.o build/utils.o
+	$(CC) $(ADD_EIGEN) $(CPU_OPTIMIZE) build/MatrixFP32.o build/utils.o src/cpu_xgemm.cpp test/benchmark_cpu.cpp -o benchmark_cpu.out
 
 # Naive vs cuBLAS
-build/naive_xgemm.o: src/naive_xgemm.cu
-	$(CC) $(DEVICE_COMPILE_FLAG) src/naive_xgemm.cu -o build/naive_xgemm.o
-
-benchmark_naive.out: test/benchmark_naive.cu build/MatrixFP32.o build/utils.o build/naive_xgemm.o
-	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o build/naive_xgemm.o test/benchmark_naive.cu -o benchmark_naive.out
+benchmark_naive.out: src/naive_xgemm.cu test/benchmark_naive.cu build/MatrixFP32.o build/utils.o
+	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/naive_xgemm.cu test/benchmark_naive.cu -o benchmark_naive.out
 
 # coalesced vs cuBLAS
 build/coalesced_xgemm.o: src/coalesced_xgemm.cu

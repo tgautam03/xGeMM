@@ -25,7 +25,7 @@
 int main(int argc, char const *argv[])
 {
     // Options: 8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192
-    int mat_sizes[] = {8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192};
+    int mat_sizes[] = {128, 256, 512, 1028, 2048, 4096};
     int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
 
     // For recording time
@@ -52,8 +52,8 @@ int main(int argc, char const *argv[])
         MatrixFP32 C_FP32_xgemm = MatrixFP32(n, n, false);
 
         // Initialize Matrices
-        init_mat(A_FP32, -10, 10);          // Random Initialization between -10 and 10
-        init_mat(B_FP32, -10, 10);          // Random Initialization between -10 and 10
+        random_init_mat(A_FP32, -10, 10);          // Random Initialization between -10 and 10
+        random_init_mat(B_FP32, -10, 10);          // Random Initialization between -10 and 10
         init_mat(C_FP32_cublas, 1.0f);     // Initialize to 1
         init_mat(C_FP32_xgemm, -1.0f);     // Initialize to -1
 
@@ -80,17 +80,17 @@ int main(int argc, char const *argv[])
         float beta = 0;
         cublas_check(cublasSgemm(handle,
                                 CUBLAS_OP_N, CUBLAS_OP_N,
-                                n, n, n, // Num Cols of C, Num rows of C, Shared dim of A and B
+                                d_C_FP32_cublas.n_cols, d_C_FP32_cublas.n_rows, d_A_FP32.n_cols, // Num Cols of C, Num rows of C, Shared dim of A and B
                                 &alpha,
-                                d_B_FP32._mat, n, // Num cols of B
-                                d_A_FP32._mat, n, // Num cols of A
+                                d_B_FP32.ptr, d_B_FP32.n_cols, // Num cols of B
+                                d_A_FP32.ptr, d_A_FP32.n_cols, // Num cols of A
                                 &beta,
-                                d_C_FP32_cublas._mat, n) // Num cols of C
+                                d_C_FP32_cublas.ptr, d_C_FP32_cublas.n_cols) // Num cols of C
                     );
         cudaDeviceSynchronize();
 
         // Naive Kernel execution
-        naive_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm, 32, 32);
+        naive_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
         cudaDeviceSynchronize();
 
         // Assert that naive implementation is correct
@@ -121,14 +121,14 @@ int main(int argc, char const *argv[])
             float alpha = 1;
             float beta = 0;
             cublas_check(cublasSgemm(handle,
-                                    CUBLAS_OP_N, CUBLAS_OP_N,
-                                    n, n, n, // Num Cols of C, Num rows of C, Shared dim of A and B
-                                    &alpha,
-                                    d_B_FP32._mat, n, // Num cols of B
-                                    d_A_FP32._mat, n, // Num cols of A
-                                    &beta,
-                                    d_C_FP32_cublas._mat, n) // Num cols of C
-                        );
+                                CUBLAS_OP_N, CUBLAS_OP_N,
+                                d_C_FP32_cublas.n_cols, d_C_FP32_cublas.n_rows, d_A_FP32.n_cols, // Num Cols of C, Num rows of C, Shared dim of A and B
+                                &alpha,
+                                d_B_FP32.ptr, d_B_FP32.n_cols, // Num cols of B
+                                d_A_FP32.ptr, d_A_FP32.n_cols, // Num cols of A
+                                &beta,
+                                d_C_FP32_cublas.ptr, d_C_FP32_cublas.n_cols) // Num cols of C
+                    );
             cudaDeviceSynchronize();
         }
         cudaEventRecord(end);
@@ -146,7 +146,7 @@ int main(int argc, char const *argv[])
         cudaEventRecord(beg);
         for (int n_runs = 0; n_runs < 10; n_runs++)
         {
-            naive_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm, 32, 32);
+            naive_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
             cudaDeviceSynchronize();
         }
         cudaEventRecord(end);

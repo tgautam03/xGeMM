@@ -38,8 +38,8 @@ int main(int argc, char const *argv[])
         MatrixFP32 C_FP32 = MatrixFP32(n, n, false);
 
         // Initialize Matrices
-        init_mat(A_FP32, -10, 10); // Random Initialization between -10 and 10
-        init_mat(B_FP32, -10, 10); // Random Initialization between -10 and 10
+        random_init_mat(A_FP32, -10, 10); // Random Initialization between -10 and 10
+        random_init_mat(B_FP32, -10, 10); // Random Initialization between -10 and 10
         init_mat(C_FP32, -1.0f); // Initialize to -1 (Different from C_eigen)
 
         // Generate Eigen square matrices A, B and C
@@ -47,14 +47,14 @@ int main(int argc, char const *argv[])
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
-                A_eigen(i,j) = A_FP32.get_val(i, j);
+                A_eigen(i,j) = A_FP32.ptr[i*A_FP32.n_cols + j];
         }
 
         Eigen::MatrixXd B_eigen(n, n);
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < n; j++)
-                B_eigen(i,j) = B_FP32.get_val(i, j);
+                B_eigen(i,j) = B_FP32.ptr[i*B_FP32.n_cols + j];
         }
 
         Eigen::MatrixXd C_eigen(n, n);
@@ -73,15 +73,15 @@ int main(int argc, char const *argv[])
         // Assert Results
         double eps = 1e-8;
         std::cout << "Asserting... " << "n: " << n << "\n";
-        for (int i = 0; i < C_FP32.rows(); i++)
+        for (int i = 0; i < C_FP32.n_rows; i++)
         {
-            for (int j = 0; j < C_FP32.cols(); j++)
+            for (int j = 0; j < C_FP32.n_cols; j++)
             {
-                if (fabs(C_FP32.get_val(i, j) - C_eigen(i,j)) > eps)
+                if (fabs(C_FP32.ptr[i*C_FP32.n_cols + j] - C_eigen(i,j)) > eps)
                 {
                     std::cerr << "Assertion failed for " << "row number: " << i << ", col number: " << j << ".\n"
-                            << "Absolute Difference: " << fabs(C_FP32.get_val(i,j) - C_eigen(i,j)) << "\n";
-                    assert(fabs(C_FP32.get_val(i,j) - C_eigen(i,j)) < eps && "Assertion failed!");
+                            << "Absolute Difference: " << fabs(C_FP32.ptr[i*C_FP32.n_cols + j] - C_eigen(i,j)) << "\n";
+                    assert(fabs(C_FP32.ptr[i*C_FP32.n_cols + j] - C_eigen(i,j)) < eps && "Assertion failed!");
                 }
             }
         }

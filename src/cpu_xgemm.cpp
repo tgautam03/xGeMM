@@ -4,16 +4,16 @@
 void cpu_xgemm(MatrixFP32 A_mat, MatrixFP32 B_mat, MatrixFP32 C_mat)
 {
     // Getting A Matrix Dimension
-    int A_n_rows = A_mat.rows(); 
-    int A_n_cols = A_mat.cols();
+    int A_n_rows = A_mat.n_rows; 
+    int A_n_cols = A_mat.n_cols;
 
     // Getting B Matrix Dimension
-    int B_n_rows = B_mat.rows(); 
-    int B_n_cols = B_mat.cols();
+    int B_n_rows = B_mat.n_rows; 
+    int B_n_cols = B_mat.n_cols;
 
     // Getting C Matrix Dimension
-    int C_n_rows = C_mat.rows(); 
-    int C_n_cols = C_mat.cols();
+    int C_n_rows = C_mat.n_rows; 
+    int C_n_cols = C_mat.n_cols;
 
     // Asserting dimensions
     assert (A_n_cols == B_n_rows && "Matrices A & B must have one common dimension");
@@ -27,9 +27,9 @@ void cpu_xgemm(MatrixFP32 A_mat, MatrixFP32 B_mat, MatrixFP32 C_mat)
             float val = 0.0f;
             for (int k = 0; k < A_n_cols; k++)
             {
-                val += A_mat.get_val(row, k) * B_mat.get_val(k, col);
+                val += A_mat.ptr[row*A_n_cols + k] * B_mat.ptr[k*B_n_cols + col];
             }
-            C_mat.set_val(row, col, val);
+            C_mat.ptr[row*C_n_cols + col] = val;
         }
     }
 }
