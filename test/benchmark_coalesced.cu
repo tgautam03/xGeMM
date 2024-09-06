@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <cublas_v2.h>
 
 #include "../include/MatrixFP32.cuh"
@@ -25,7 +26,7 @@
 int main(int argc, char const *argv[])
 {
     // Options: 8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192
-    int mat_sizes[] = {8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192};
+    int mat_sizes[] = {128, 256, 512, 1028, 2048, 4096};
     int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
 
     // For recording time
@@ -52,10 +53,10 @@ int main(int argc, char const *argv[])
         MatrixFP32 C_FP32_xgemm = MatrixFP32(n, n, false);
 
         // Initialize Matrices
-        init_mat(A_FP32, -10, 10);          // Random Initialization between -10 and 10
-        init_mat(B_FP32, -10, 10);          // Random Initialization between -10 and 10
-        init_mat(C_FP32_cublas, -1.0f);     // Initialize to -1
-        init_mat(C_FP32_xgemm, 1.0f);     // Initialize to 1
+        random_init_mat(A_FP32, -10, 10);          // Random Initialization between -10 and 10
+        random_init_mat(B_FP32, -10, 10);          // Random Initialization between -10 and 10
+        init_mat(C_FP32_cublas, 1.0f);     // Initialize to 1
+        init_mat(C_FP32_xgemm, -1.0f);     // Initialize to -1
 
         // Move matrices to device
         MatrixFP32 d_A_FP32 = MatrixFP32(n, n, true); 
@@ -80,17 +81,17 @@ int main(int argc, char const *argv[])
         float beta = 0;
         cublas_check(cublasSgemm(handle,
                                 CUBLAS_OP_N, CUBLAS_OP_N,
-                                n, n, n, // Num Cols of C, Num rows of C, Shared dim of A and B
+                                d_C_FP32_cublas.n_cols, d_C_FP32_cublas.n_rows, d_A_FP32.n_cols, // Num Cols of C, Num rows of C, Shared dim of A and B
                                 &alpha,
-                                d_B_FP32._mat, n, // Num cols of B
-                                d_A_FP32._mat, n, // Num cols of A
+                                d_B_FP32.ptr, d_B_FP32.n_cols, // Num cols of B
+                                d_A_FP32.ptr, d_A_FP32.n_cols, // Num cols of A
                                 &beta,
-                                d_C_FP32_cublas._mat, n) // Num cols of C
+                                d_C_FP32_cublas.ptr, d_C_FP32_cublas.n_cols) // Num cols of C
                     );
         cudaDeviceSynchronize();
 
         // coalesced Kernel execution
-        coalesced_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm, 32, 32);
+        coalesced_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
         cudaDeviceSynchronize();
 
         // Assert that coalesced implementation is correct
@@ -121,14 +122,14 @@ int main(int argc, char const *argv[])
             float alpha = 1;
             float beta = 0;
             cublas_check(cublasSgemm(handle,
-                                    CUBLAS_OP_N, CUBLAS_OP_N,
-                                    n, n, n, // Num Cols of C, Num rows of C, Shared dim of A and B
-                                    &alpha,
-                                    d_B_FP32._mat, n, // Num cols of B
-                                    d_A_FP32._mat, n, // Num cols of A
-                                    &beta,
-                                    d_C_FP32_cublas._mat, n) // Num cols of C
-                        );
+                                CUBLAS_OP_N, CUBLAS_OP_N,
+                                d_C_FP32_cublas.n_cols, d_C_FP32_cublas.n_rows, d_A_FP32.n_cols, // Num Cols of C, Num rows of C, Shared dim of A and B
+                                &alpha,
+                                d_B_FP32.ptr, d_B_FP32.n_cols, // Num cols of B
+                                d_A_FP32.ptr, d_A_FP32.n_cols, // Num cols of A
+                                &beta,
+                                d_C_FP32_cublas.ptr, d_C_FP32_cublas.n_cols) // Num cols of C
+                    );
             cudaDeviceSynchronize();
         }
         cudaEventRecord(end);
@@ -146,7 +147,7 @@ int main(int argc, char const *argv[])
         cudaEventRecord(beg);
         for (int n_runs = 0; n_runs < 10; n_runs++)
         {
-            coalesced_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm, 32, 32);
+            coalesced_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
             cudaDeviceSynchronize();
         }
         cudaEventRecord(end);
@@ -193,9 +194,9 @@ int main(int argc, char const *argv[])
         std::cout << xgemm_gflops[mat_size] << " ";
     std::cout << "\n \n";
 
-    std::cout << "How fast is cuBLAS compared to coalesced xGeMM (xGeMM/CuBLAS): ";
+    std::cout << "cuBLAS vs coalesced xGeMM (CuBLAS/xGeMM): ";
     for (int mat_size = 0; mat_size < n_sizes; mat_size++)
-        std::cout << xgemm_time[mat_size]/cublas_time[mat_size] << "x ";
+        std::cout << std::fixed << std::setprecision(2) << cublas_time[mat_size]/xgemm_time[mat_size]*100 << "% ";
     std::cout << "\n";
 
     // Saving to benchmark file

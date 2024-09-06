@@ -1,12 +1,17 @@
 #ifndef UTILS
 #define UTILS
+#include <iostream>
+#include <assert.h>
+#include <random>
+#include <iomanip>
+#include <fstream>
 #include "../include/MatrixFP32.cuh"
 
 // Initalizing MatrixFP32 with val
 void init_mat(MatrixFP32 mat, float val);
 
 // Initalizing MatrixFP32 randomly between (MAX_VAL, MIN_VAL)
-void init_mat(MatrixFP32 mat, int MAX_VAL, int MIN_VAL);
+void random_init_mat(MatrixFP32 mat, int MAX_VAL, int MIN_VAL);
 
 // Print Matrix (Full or Partial)
 void print_mat(MatrixFP32 mat, bool full);
