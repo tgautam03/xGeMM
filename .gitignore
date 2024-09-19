@@ -8,3 +8,4 @@
 *.o
 .vscode
 lib/eigen-3.4.0
+.venv
