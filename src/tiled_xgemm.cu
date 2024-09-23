@@ -44,8 +44,8 @@ __global__ void tiled_mat_mul_kernel(MatrixFP32 d_A, MatrixFP32 d_B, MatrixFP32 
         __syncthreads();
 
         // Dot product
-        for (int k = 0; k < TILE_WIDTH; k++)
-            value += sh_A[ty][k] * sh_B[k][tx];
+        for (int k_phase = 0; k_phase < TILE_WIDTH; k_phase++)
+            value += sh_A[ty][k_phase] * sh_B[k_phase][tx];
         __syncthreads();
     }
     // Assigning calculated value
