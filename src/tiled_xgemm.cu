@@ -25,7 +25,7 @@ __global__ void tiled_mat_mul_kernel(MatrixFP32 d_A, MatrixFP32 d_B, MatrixFP32 
     __shared__ float sh_B[TILE_WIDTH][TILE_WIDTH];
 
     // Phases
-    const int phases  = ceil((float)d_A.n_cols/TILE_WIDTH);
+    const int phases = ceil((float)d_A.n_cols/TILE_WIDTH);
 
     // Parallel mat mul
     float value = 0;
