@@ -14,7 +14,7 @@
 // Tiles of B
 #define tiles_B_cols 128
 
-__global__ void coarse_2d_mat_mul_kernel(MatrixFP32 d_A, MatrixFP32 d_B, MatrixFP32 d_C)
+__global__ void coarse_2d_mat_mul_kernel(float *d_A_ptr, float *d_B_ptr, float *d_C_ptr, int C_n_rows, int C_n_cols, int A_n_cols)
 {
     // Number of threads per block
     const int n_threads_per_block = tiles_A_rows * tiles_B_cols / (COARSE_FACTOR_X*COARSE_FACTOR_Y);
@@ -50,23 +50,23 @@ __global__ void coarse_2d_mat_mul_kernel(MatrixFP32 d_A, MatrixFP32 d_B, MatrixF
     float register_B[COARSE_FACTOR_Y] = {0.0f};
 
     // Phases
-    const int phases = ceil((float)d_A.n_cols/tiles_A_cols);
+    const int phases = ceil((float)A_n_cols/tiles_A_cols);
 
     for (int phase = 0; phase < phases; phase++)
     {
         // Load Tiles into shared memory
         for (int load_offset = 0; load_offset < tiles_A_rows; load_offset+=stride_A)
         {
-            if ((by*tiles_A_rows + load_offset+A_view_ty < d_A.n_rows) && ((phase*tiles_A_cols+A_view_tx) < d_A.n_cols))
-                sh_A[load_offset+A_view_ty][A_view_tx] = d_A.ptr[(by*tiles_A_rows+load_offset+A_view_ty)*d_A.n_cols + (phase*tiles_A_cols+A_view_tx)];
+            if ((by*tiles_A_rows + load_offset+A_view_ty < C_n_rows) && ((phase*tiles_A_cols+A_view_tx) < A_n_cols))
+                sh_A[load_offset+A_view_ty][A_view_tx] = d_A_ptr[(by*tiles_A_rows+load_offset+A_view_ty)*A_n_cols + (phase*tiles_A_cols+A_view_tx)];
             else
                 sh_A[load_offset+A_view_ty][A_view_tx] = 0.0f;
         }
         
         for (int load_offset = 0; load_offset < tiles_A_cols; load_offset+=stride_B)
         {
-            if (((phase*tiles_A_cols + B_view_ty+load_offset) < d_B.n_rows) && (bx*tiles_B_cols + B_view_tx < d_B.n_cols))
-                sh_B[B_view_ty+load_offset][B_view_tx] = d_B.ptr[(phase*tiles_A_cols+B_view_ty+load_offset)*d_A.n_cols + (bx*tiles_B_cols+B_view_tx)];
+            if (((phase*tiles_A_cols + B_view_ty+load_offset) < A_n_cols) && (bx*tiles_B_cols + B_view_tx < C_n_cols))
+                sh_B[B_view_ty+load_offset][B_view_tx] = d_B_ptr[(phase*tiles_A_cols+B_view_ty+load_offset)*A_n_cols + (bx*tiles_B_cols+B_view_tx)];
             else
                 sh_B[B_view_ty+load_offset][B_view_tx] = 0.0f;
         }
@@ -96,16 +96,16 @@ __global__ void coarse_2d_mat_mul_kernel(MatrixFP32 d_A, MatrixFP32 d_B, MatrixF
     {
         for (int cx = 0; cx < COARSE_FACTOR_X; cx++)
         {
-            if ((by*tiles_A_rows+row+cy < d_C.n_rows) && (bx*tiles_B_cols+col+cx < d_C.n_cols))
-                d_C.ptr[(by*tiles_A_rows+row+cy)*d_C.n_cols + (bx*tiles_B_cols+col+cx)] = 1*value[cy][cx] + 0*d_C.ptr[(by*tiles_A_rows+row+cy)*d_C.n_cols + (bx*tiles_B_cols+col+cx)];
+            if ((by*tiles_A_rows+row+cy < C_n_rows) && (bx*tiles_B_cols+col+cx < C_n_cols))
+                d_C_ptr[(by*tiles_A_rows+row+cy)*C_n_cols + (bx*tiles_B_cols+col+cx)] = 1*value[cy][cx] + 0*d_C_ptr[(by*tiles_A_rows+row+cy)*C_n_cols + (bx*tiles_B_cols+col+cx)];
         }
     } 
 }
 
-void coarse_2d_xgemm(MatrixFP32 d_A, MatrixFP32 d_B, MatrixFP32 d_C)
+void coarse_2d_xgemm(float *d_A_ptr, float *d_B_ptr, float *d_C_ptr, int C_n_rows, int C_n_cols, int A_n_cols)
 {
     // Kernel execution
-    dim3 dim_grid(ceil(d_C.n_cols/(float)(tiles_B_cols)), ceil(d_C.n_rows/(float)(tiles_A_rows)));
+    dim3 dim_grid(ceil(C_n_cols/(float)(tiles_B_cols)), ceil(C_n_rows/(float)(tiles_A_rows)));
     dim3 dim_block(tiles_A_rows*tiles_B_cols/(COARSE_FACTOR_X*COARSE_FACTOR_Y));
-    coarse_2d_mat_mul_kernel<<<dim_grid, dim_block>>>(d_A, d_B, d_C);
+    coarse_2d_mat_mul_kernel<<<dim_grid, dim_block>>>(d_A_ptr, d_B_ptr, d_C_ptr, C_n_rows, C_n_cols, A_n_cols);
 }

@@ -3,7 +3,7 @@
 #include <cublas_v2.h>
 
 #include "../include/MatrixFP32.cuh"
-#include "../include/utils.hpp"
+#include "../include/utils.cuh"
 
 #include "../include/coarse_2d_xgemm.cuh"
 
@@ -91,7 +91,7 @@ int main(int argc, char const *argv[])
         cudaDeviceSynchronize();
 
         // coarse_2d Kernel execution
-        coarse_2d_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
+        coarse_2d_xgemm(d_A_FP32.ptr, d_B_FP32.ptr, d_C_FP32_xgemm.ptr, d_C_FP32_xgemm.n_rows, d_C_FP32_xgemm.n_cols, d_A_FP32.n_cols);
         cudaDeviceSynchronize();
 
         // Assert that coarse_2d implementation is correct
@@ -147,7 +147,7 @@ int main(int argc, char const *argv[])
         cudaEventRecord(beg);
         for (int n_runs = 0; n_runs < 10; n_runs++)
         {
-            coarse_2d_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
+            coarse_2d_xgemm(d_A_FP32.ptr, d_B_FP32.ptr, d_C_FP32_xgemm.ptr, d_C_FP32_xgemm.n_rows, d_C_FP32_xgemm.n_cols, d_A_FP32.n_cols);
             cudaDeviceSynchronize();
         }
         cudaEventRecord(end);

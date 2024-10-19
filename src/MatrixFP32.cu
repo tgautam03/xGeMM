@@ -2,29 +2,22 @@
 #include <iostream>
 
 #include "../include/MatrixFP32.cuh"
+#include "../include/utils.cuh"
 
-#define CUDA_CHECK(err) {if (err != cudaSuccess){printf("%s in %s at line %d \n", cudaGetErrorString(err), __FILE__, __LINE__);exit(EXIT_FAILURE);}}
+// #define cuda_check(err) {if (err != cudaSuccess){printf("%s in %s at line %d \n", cudaGetErrorString(err), __FILE__, __LINE__);exit(EXIT_FAILURE);}}
 
-MatrixFP32::MatrixFP32(int n_rows_, int n_cols_, bool on_device_)
+MatrixFP32::MatrixFP32(int n_rows_, int n_cols_, bool on_device_) : n_rows(n_rows_), n_cols(n_cols_), on_device(on_device_)
 {
-    // Assigning Number of rows and cols to provate variables
-    n_rows = n_rows_;
-    n_cols = n_cols_;
-
     if (on_device_ == false)
     {
         // Initialize dynamic array
         ptr = new float[n_rows*n_cols];
-        // Matrix is in host memory (RAM)
-        on_device = on_device_;
     }
     else
     {
         // Allocate device memory
         cudaError_t err = cudaMalloc((void**) &ptr, n_rows*n_cols*sizeof(float));
-        CUDA_CHECK(err);
-        // Matrix is in device memory (VRAM)
-        on_device = on_device_;
+        cuda_check(err);
     }
 }
 
@@ -44,7 +37,7 @@ void MatrixFP32::copy_to_device(MatrixFP32 d_mat)
 
     // Copying from host to device memory
     cudaError_t err = cudaMemcpy(d_mat.ptr, ptr, n_rows*n_cols*sizeof(float), cudaMemcpyHostToDevice);
-    CUDA_CHECK(err);
+    cuda_check(err);
 }
 
 void MatrixFP32::copy_to_host(MatrixFP32 h_mat)
@@ -55,5 +48,5 @@ void MatrixFP32::copy_to_host(MatrixFP32 h_mat)
 
     // Copying from host to device memory
     cudaError_t err = cudaMemcpy(h_mat.ptr, ptr, n_rows*n_cols*sizeof(float), cudaMemcpyDeviceToHost);
-    CUDA_CHECK(err);
+    cuda_check(err);
 }

@@ -1,4 +1,4 @@
-#include "../include/utils.hpp"
+#include "../include/utils.cuh"
 
 void init_mat(MatrixFP32 mat, float val)
 {

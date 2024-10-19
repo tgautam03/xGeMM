@@ -7,6 +7,22 @@
 #include <fstream>
 #include "../include/MatrixFP32.cuh"
 
+// CUDA Error Checking
+#define cuda_check(err) { \
+    if (err != cudaSuccess) { \
+        std::cout << cudaGetErrorString(err) << " in " << __FILE__ << " at line " << __LINE__ << "\n"; \
+        exit(EXIT_FAILURE); \
+    } \
+}
+
+// CUBLAS Error Checking
+#define cublas_check(status) { \
+    if (status != CUBLAS_STATUS_SUCCESS) { \
+        std::cerr << "cuBLAS Error" << std::endl; \
+        exit(EXIT_FAILURE); \
+    } \
+}
+
 // Initalizing MatrixFP32 with val
 void init_mat(MatrixFP32 mat, float val);
 

@@ -4,14 +4,14 @@
 class MatrixFP32
 {
 public:
-    int n_rows;        // Number of rows
-    int n_cols;        // Number of cols
+    const int n_rows;        // Number of rows
+    const int n_cols;        // Number of cols
 
     // Pointer to dynamic array
     float* ptr;
     
     // Matrix in device memory: true; else: false
-    bool on_device; 
+    const bool on_device; 
     
     // Constructor to initialize n_rows x n_cols matrix
     MatrixFP32(int n_rows, int n_cols, bool on_device);

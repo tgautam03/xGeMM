@@ -7,7 +7,7 @@
 #include <Eigen/Dense>
 
 #include "../include/MatrixFP32.cuh"
-#include "../include/utils.hpp"
+#include "../include/utils.cuh"
 #include "../include/cpu_xgemm.hpp"
 
 int main(int argc, char const *argv[])

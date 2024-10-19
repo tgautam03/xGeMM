@@ -1,31 +1,16 @@
 #include <iostream>
 #include <iomanip>
 #include <cublas_v2.h>
+#include <device_launch_parameters.h>
 
 #include "../include/MatrixFP32.cuh"
-#include "../include/utils.hpp"
+#include "../include/utils.cuh"
 
 #include "../include/naive_xgemm.cuh"
 
-// CUDA Error Checking
-#define cuda_check(err) { \
-    if (err != cudaSuccess) { \
-        std::cout << cudaGetErrorString(err) << " in " << __FILE__ << " at line " << __LINE__ << "\n"; \
-        exit(EXIT_FAILURE); \
-    } \
-}
-
-// CUBLAS Error Checking
-#define cublas_check(status) { \
-    if (status != CUBLAS_STATUS_SUCCESS) { \
-        std::cerr << "cuBLAS Error" << std::endl; \
-        exit(EXIT_FAILURE); \
-    } \
-}
-
 int main(int argc, char const *argv[])
 {
-    // Options: 8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192
+    // Options: 8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096
     int mat_sizes[] = {128, 256, 512, 1028, 2048, 4096};
     int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
 
@@ -91,7 +76,7 @@ int main(int argc, char const *argv[])
         cudaDeviceSynchronize();
 
         // Naive Kernel execution
-        naive_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
+        naive_xgemm(d_A_FP32.ptr, d_B_FP32.ptr, d_C_FP32_xgemm.ptr, d_C_FP32_xgemm.n_rows, d_C_FP32_xgemm.n_cols, d_A_FP32.n_cols);
         cudaDeviceSynchronize();
 
         // Assert that naive implementation is correct
@@ -147,7 +132,7 @@ int main(int argc, char const *argv[])
         cudaEventRecord(beg);
         for (int n_runs = 0; n_runs < 10; n_runs++)
         {
-            naive_xgemm(d_A_FP32, d_B_FP32, d_C_FP32_xgemm);
+            naive_xgemm(d_A_FP32.ptr, d_B_FP32.ptr, d_C_FP32_xgemm.ptr, d_C_FP32_xgemm.n_rows, d_C_FP32_xgemm.n_cols, d_A_FP32.n_cols);
             cudaDeviceSynchronize();
         }
         cudaEventRecord(end);
