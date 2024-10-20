@@ -7,26 +7,10 @@
 
 #include "../include/tiled_xgemm.cuh"
 
-// CUDA Error Checking
-#define cuda_check(err) { \
-    if (err != cudaSuccess) { \
-        std::cout << cudaGetErrorString(err) << " in " << __FILE__ << " at line " << __LINE__ << "\n"; \
-        exit(EXIT_FAILURE); \
-    } \
-}
-
-// CUBLAS Error Checking
-#define cublas_check(status) { \
-    if (status != CUBLAS_STATUS_SUCCESS) { \
-        std::cerr << "cuBLAS Error" << std::endl; \
-        exit(EXIT_FAILURE); \
-    } \
-}
-
 int main(int argc, char const *argv[])
 {
     // Options: 8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192
-    int mat_sizes[] = {128, 256, 512, 1028, 2048, 4096};
+    int mat_sizes[] = {5, 11, 128, 256, 512, 1028, 2048, 4096, 5000};
     int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
 
     // For recording time
