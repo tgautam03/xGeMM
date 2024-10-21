@@ -5,12 +5,12 @@
 #include "../include/MatrixFP32.cuh"
 #include "../include/utils.cuh"
 
-#include "../include/coarse_2d_vec_xgemm.cuh"
+#include "../include/coarse_2d_transpose_xgemm.cuh"
 
 int main(int argc, char const *argv[])
 {
     // Options: 8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192
-    int mat_sizes[] = {4, 8, 12, 128, 256, 512, 1024, 2048, 4096, 5000};
+    int mat_sizes[] = {5, 11, 128, 256, 512, 1028, 2048, 4096, 5000};
     int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
 
     // For recording time
@@ -74,16 +74,19 @@ int main(int argc, char const *argv[])
                     );
         cudaDeviceSynchronize();
 
-        // coarse_2d_vec Kernel execution
-        coarse_2d_vec_xgemm(d_A_FP32.ptr, d_B_FP32.ptr, d_C_FP32_xgemm.ptr, d_C_FP32_xgemm.n_rows, d_C_FP32_xgemm.n_cols, d_A_FP32.n_cols);
+        // coarse_2d_transpose Kernel execution
+        coarse_2d_transpose_xgemm(d_A_FP32.ptr, d_B_FP32.ptr, d_C_FP32_xgemm.ptr, d_C_FP32_xgemm.n_rows, d_C_FP32_xgemm.n_cols, d_A_FP32.n_cols);
         cudaDeviceSynchronize();
 
-        // Assert that coarse_2d_vec implementation is correct
+        // Assert that coarse_2d_transpose implementation is correct
         d_C_FP32_cublas.copy_to_host(C_FP32_cublas);
         d_C_FP32_xgemm.copy_to_host(C_FP32_xgemm);
+        std::cout << "Asserting Results for N: " << n << "\n";
+        assert_mat(C_FP32_xgemm, C_FP32_cublas, 1e-8);
+        std::cout << "Assertion Passed! \n \n";
 
         // Printing the smallest matrix result
-        if (n <= 8)
+        if (n == 8)
         {
             std::cout << "Matrix C (cuBLAS): \n";
             print_mat(C_FP32_cublas, true);
@@ -93,10 +96,6 @@ int main(int argc, char const *argv[])
             print_mat(C_FP32_xgemm, true);
             std::cout << "\n";
         }
-
-        std::cout << "Asserting Results for N: " << n << "\n";
-        assert_mat(C_FP32_xgemm, C_FP32_cublas, 1e-8);
-        std::cout << "Assertion Passed! \n \n";
 
         //----------------------------------------------------//
         //--------------------- cuBLAS -----------------------//
@@ -132,7 +131,7 @@ int main(int argc, char const *argv[])
         cudaEventRecord(beg);
         for (int n_runs = 0; n_runs < 10; n_runs++)
         {
-            coarse_2d_vec_xgemm(d_A_FP32.ptr, d_B_FP32.ptr, d_C_FP32_xgemm.ptr, d_C_FP32_xgemm.n_rows, d_C_FP32_xgemm.n_cols, d_A_FP32.n_cols);
+            coarse_2d_transpose_xgemm(d_A_FP32.ptr, d_B_FP32.ptr, d_C_FP32_xgemm.ptr, d_C_FP32_xgemm.n_rows, d_C_FP32_xgemm.n_cols, d_A_FP32.n_cols);
             cudaDeviceSynchronize();
         }
         cudaEventRecord(end);
@@ -179,14 +178,14 @@ int main(int argc, char const *argv[])
         std::cout << xgemm_gflops[mat_size] << " ";
     std::cout << "\n \n";
 
-    std::cout << "cuBLAS vs coarse_2d_vec xGeMM (CuBLAS/xGeMM): ";
+    std::cout << "cuBLAS vs coarse_2d_transpose xGeMM (CuBLAS/xGeMM): ";
     for (int mat_size = 0; mat_size < n_sizes; mat_size++)
         std::cout << std::fixed << std::setprecision(2) << cublas_time[mat_size]/xgemm_time[mat_size]*100 << "% ";
     std::cout << "\n";
 
     // Saving to benchmark file
     update_benckmark_txt("txt_benchmarks/cublas.txt", cublas_time, cublas_gflops, mat_sizes, n_sizes);
-    update_benckmark_txt("txt_benchmarks/coarse_2d_vec_xgemm.txt", xgemm_time, xgemm_gflops, mat_sizes, n_sizes);
+    update_benckmark_txt("txt_benchmarks/coarse_2d_transpose_xgemm.txt", xgemm_time, xgemm_gflops, mat_sizes, n_sizes);
 
     return 0;
 }

@@ -39,6 +39,10 @@ benchmark_coarse_1d.out: src/coarse_1d_xgemm.cu test/benchmark_coarse_1d.cu buil
 benchmark_coarse_2d.out: src/coarse_2d_xgemm.cu test/benchmark_coarse_2d.cu build/MatrixFP32.o build/utils.o
 	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/coarse_2d_xgemm.cu test/benchmark_coarse_2d.cu -o benchmark_coarse_2d.out
 
+# coarse_2d_transpose vs cuBLAS
+benchmark_coarse_2d_transpose.out: src/coarse_2d_transpose_xgemm.cu test/benchmark_coarse_2d_transpose.cu build/MatrixFP32.o build/utils.o
+	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/coarse_2d_transpose_xgemm.cu test/benchmark_coarse_2d_transpose.cu -o benchmark_coarse_2d_transpose.out
+
 # coarse_2d_vec vs cuBLAS
 benchmark_coarse_2d_vec.out: src/coarse_2d_vec_xgemm.cu test/benchmark_coarse_2d_vec.cu build/MatrixFP32.o build/utils.o
 	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/coarse_2d_vec_xgemm.cu test/benchmark_coarse_2d_vec.cu -o benchmark_coarse_2d_vec.out
