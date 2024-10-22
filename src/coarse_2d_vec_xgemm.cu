@@ -22,6 +22,9 @@ __global__ void coarse_2d_vec_mat_mul_kernel(float *d_A_ptr, float *d_B_ptr, flo
     static_assert(n_threads_per_block % tiles_B_cols == 0);
     static_assert(tiles_A_cols % 4 == 0);
     static_assert(tiles_B_cols % 4 == 0);
+    assert(C_n_rows % 4 == 0);
+    assert(C_n_cols % 4 == 0);
+    assert(A_n_cols % 4 == 0);
 
     // Details regarding this thread
     const int by = blockIdx.y;
