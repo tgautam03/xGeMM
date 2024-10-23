@@ -12,8 +12,8 @@
 
 int main(int argc, char const *argv[])
 {
-    // Options: 128, 256, 512, 1028, 2048, 4096, 8192
-    int mat_sizes[] = {128, 256, 512, 1028, 2048, 4096};
+    // Options: Anything!
+    int mat_sizes[] = {128, 256, 512, 1024, 2048, 4096};
     int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
     
     double cblas_time[n_sizes];

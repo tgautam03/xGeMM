@@ -9,7 +9,7 @@
 
 int main(int argc, char const *argv[])
 {
-    // Options: 8, 16, 32, 64, 128, 256, 512, 1028, 2048, 4096, 8192
+    // Options: 4, 8, 12, 16, 20, etc. (Multiples of 4!)
     int mat_sizes[] = {128, 256, 512, 1024, 2048, 4096};
     int n_sizes = sizeof(mat_sizes) / sizeof(mat_sizes[0]);
 

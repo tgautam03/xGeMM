@@ -11,6 +11,10 @@ CPU_OPTIMIZE = -O3 -Xcompiler "-Ofast -march=native -funroll-loops -ffast-math -
 build/MatrixFP32.o: src/MatrixFP32.cu
 	$(CC) $(DEVICE_COMPILE_FLAG) src/MatrixFP32.cu -o build/MatrixFP32.o
 
+# MatrixFP16
+build/MatrixFP16.o: src/MatrixFP16.cu
+	$(CC) $(DEVICE_COMPILE_FLAG) src/MatrixFP16.cu -o build/MatrixFP16.o
+
 # Utils
 build/utils.o: src/utils.cu
 	$(CC) $(DEVICE_COMPILE_FLAG) $(ADD_EIGEN) src/utils.cu -o build/utils.o
@@ -50,6 +54,10 @@ build/utils.o: src/utils.cu
 # coarse_2d_vec vs cuBLAS
 07_benchmark_coarse_2d_vec.out: src/coarse_2d_vec_xgemm.cu test/07_benchmark_coarse_2d_vec.cu build/MatrixFP32.o build/utils.o
 	$(CC) $(LINK_CUBLAS) build/MatrixFP32.o build/utils.o src/coarse_2d_vec_xgemm.cu test/07_benchmark_coarse_2d_vec.cu -o 07_benchmark_coarse_2d_vec.out
+
+# tensor vs cuBLAS
+08_benchmark_tensor.out: src/tensor_xgemm.cu test/08_benchmark_tensor.cu build/MatrixFP32.o build/MatrixFP16.o build/utils.o
+	$(CC) -arch=sm_86 $(LINK_CUBLAS) build/MatrixFP32.o build/MatrixFP16.o build/utils.o src/tensor_xgemm.cu test/08_benchmark_tensor.cu -o 08_benchmark_tensor.out
 
 # Clean executable files
 clean: 
