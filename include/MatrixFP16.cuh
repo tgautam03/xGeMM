@@ -16,7 +16,7 @@ public:
     const bool on_device; 
     
     // Constructor to initialize n_rows x n_cols matrix
-    MatrixFP16(int n_rows, int n_cols, bool on_device);
+    MatrixFP16(int n_rows_, int n_cols_, bool on_device);
     
     // Free memory
     void free_mat();

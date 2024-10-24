@@ -4,8 +4,6 @@
 #include "../include/MatrixFP32.cuh"
 #include "../include/utils.cuh"
 
-// #define cuda_check(err) {if (err != cudaSuccess){printf("%s in %s at line %d \n", cudaGetErrorString(err), __FILE__, __LINE__);exit(EXIT_FAILURE);}}
-
 MatrixFP32::MatrixFP32(int n_rows_, int n_cols_, bool on_device_) : n_rows(n_rows_), n_cols(n_cols_), on_device(on_device_)
 {
     if (on_device_ == false)
