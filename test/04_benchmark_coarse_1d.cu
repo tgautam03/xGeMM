@@ -5,7 +5,7 @@
 #include "../include/MatrixFP32.cuh"
 #include "../include/utils.cuh"
 
-#include "../include/coarse_1d_xgemm.cuh"
+#include "../include/04_coarse_1d_xgemm.cuh"
 
 int main(int argc, char const *argv[])
 {
@@ -128,7 +128,7 @@ int main(int argc, char const *argv[])
     }
 
     // Reading cuBLAS times and GFLOPS
-    std::ifstream inputFile("txt_benchmarks/cublas.txt");
+    std::ifstream inputFile("txt_benchmarks/00b_cublas.txt");
     if (!inputFile.is_open()) 
     {
         std::cerr << "Error opening the file!" << std::endl;
@@ -205,7 +205,7 @@ int main(int argc, char const *argv[])
     std::cout << "\n";
 
     // Saving to benchmark file
-    update_benckmark_txt("txt_benchmarks/coarse_1d_xgemm.txt", xgemm_time, xgemm_gflops, mat_sizes, n_sizes);
+    update_benckmark_txt("txt_benchmarks/04_coarse_1d_xgemm.txt", xgemm_time, xgemm_gflops, mat_sizes, n_sizes);
 
     return 0;
 }

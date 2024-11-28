@@ -121,7 +121,7 @@ int main(int argc, char const *argv[])
     std::cout << "\n \n";
 
     // Saving to benchmark file
-    update_benckmark_txt("txt_benchmarks/cublas.txt", cublas_time, cublas_gflops, mat_sizes, n_sizes);
+    update_benckmark_txt("txt_benchmarks/00b_cublas.txt", cublas_time, cublas_gflops, mat_sizes, n_sizes);
 
     return 0;
 }

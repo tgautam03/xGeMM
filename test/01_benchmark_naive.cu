@@ -6,7 +6,7 @@
 #include "../include/MatrixFP32.cuh"
 #include "../include/utils.cuh"
 
-#include "../include/naive_xgemm.cuh"
+#include "../include/01_naive_xgemm.cuh"
 
 int main(int argc, char const *argv[])
 {
@@ -82,9 +82,6 @@ int main(int argc, char const *argv[])
         // Assert that naive implementation is correct
         d_C_FP32_cublas.copy_to_host(C_FP32_cublas);
         d_C_FP32_xgemm.copy_to_host(C_FP32_xgemm);
-        std::cout << "Asserting Results for N: " << n << "\n";
-        assert_mat(C_FP32_xgemm, C_FP32_cublas, 1e-8);
-        std::cout << "Assertion Passed! \n \n";
 
         // Printing the smallest matrix result
         if (n <= 8)
@@ -97,6 +94,10 @@ int main(int argc, char const *argv[])
             print_mat(C_FP32_xgemm, true);
             std::cout << "\n";
         }
+        
+        std::cout << "Asserting Results for N: " << n << "\n";
+        assert_mat(C_FP32_xgemm, C_FP32_cublas, 1e-8);
+        std::cout << "Assertion Passed! \n \n";
 
         //----------------------------------------------------//
         //---------------------- xGeMM -----------------------//
@@ -129,7 +130,7 @@ int main(int argc, char const *argv[])
     }
 
     // Reading cuBLAS times and GFLOPS
-    std::ifstream inputFile("txt_benchmarks/cublas.txt");
+    std::ifstream inputFile("txt_benchmarks/00b_cublas.txt");
     if (!inputFile.is_open()) 
     {
         std::cerr << "Error opening the file!" << std::endl;
@@ -207,7 +208,7 @@ int main(int argc, char const *argv[])
     std::cout << "\n";
 
     // Saving to benchmark file
-    update_benckmark_txt("txt_benchmarks/naive_xgemm.txt", xgemm_time, xgemm_gflops, mat_sizes, n_sizes);
+    update_benckmark_txt("txt_benchmarks/01_naive_xgemm.txt", xgemm_time, xgemm_gflops, mat_sizes, n_sizes);
 
     return 0;
 }
