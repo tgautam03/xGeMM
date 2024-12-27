@@ -1,5 +1,7 @@
 # xGeMM
-Accelerated General (FP32) Matrix Multiplication
+Accelerated General (FP32) Matrix Multiplication.
+
+**Watch the YouTube video (click the image below)**
 
 [![VideoThumbnail](https://raw.githubusercontent.com/tgautam03/xGeMM/refs/heads/master/Thumbnail.png)](https://youtu.be/GetaI7KhbzM?si=i9sMAfGqO4zyJZhq)
 
