@@ -1,7 +1,7 @@
 # xGeMM
 Accelerated General (FP32) Matrix Multiplication
 
-[![VideoThumbnail](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/GetaI7KhbzM?si=i9sMAfGqO4zyJZhq)
+[![VideoThumbnail](https://raw.githubusercontent.com/tgautam03/xGeMM/refs/heads/master/Thumbnail.png)](https://youtu.be/GetaI7KhbzM?si=i9sMAfGqO4zyJZhq)
 
 ## Dependencies
 - [Eigen 3.4.0](https://gitlab.com/libeigen/eigen/-/releases/3.4.0) (Put it in `lib`)
