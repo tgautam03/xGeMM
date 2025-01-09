@@ -1,5 +1,5 @@
 # xGeMM
-Accelerated General (FP32) Matrix Multiplication.
+Accelerated General (FP32) Matrix Multiplication. Tested on NVIDIA RTX 3090 using Ubuntu 24.04.1 LTS with nivdia-driver-550 and CUDA 12.4.   
 
 **Watch the YouTube video (click the image below)**
 
